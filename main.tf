@@ -11,7 +11,7 @@ resource "aws_lambda_function" "cloudwatch_to_syslog_server" {
   role             = aws_iam_role.cloudwatch_to_syslog_server.arn
   handler          = "index.handler"
   source_code_hash = data.archive_file.lambda.output_base64sha256 # filebase64sha256("${path.module}/lambda.zip")
-  runtime          = "nodejs8.10"
+  runtime          = "nodejs12.x"
 
   environment {
     variables = {
