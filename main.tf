@@ -1,9 +1,16 @@
+data "archive_file" "lambda" {
+  type        = "zip"
+  output_path = "${path.module}/files/lambda.zip"
+
+  source_dir = "${path.module}/lambda"
+}
+
 resource "aws_lambda_function" "cloudwatch_to_syslog_server" {
-  filename         = "${path.module}/lambda.zip"
+  filename         = "${path.module}/files/lambda.zip"
   function_name    = var.name
   role             = aws_iam_role.cloudwatch_to_syslog_server.arn
   handler          = "index.handler"
-  source_code_hash = filebase64sha256("${path.module}/lambda.zip")
+  source_code_hash = data.archive_file.lambda.output_base64sha256 # filebase64sha256("${path.module}/lambda.zip")
   runtime          = "nodejs8.10"
 
   environment {
