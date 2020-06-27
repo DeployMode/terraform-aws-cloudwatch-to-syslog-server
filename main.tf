@@ -1,8 +1,26 @@
+resource "null_resource" "install_modules" {
+
+  triggers = {
+    updated_at = timestamp()
+  }
+
+  provisioner "local-exec" {
+    command = <<EOF
+    yarn config set no-progress
+    yarn
+    EOF
+
+    working_dir = "${path.module}/lambda"
+  }
+}
+
 data "archive_file" "lambda" {
   type        = "zip"
   output_path = "${path.module}/files/lambda.zip"
 
   source_dir = "${path.module}/lambda"
+
+  depends_on = [null_resource.install_modules]
 }
 
 resource "aws_lambda_function" "cloudwatch_to_syslog_server" {
