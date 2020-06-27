@@ -83,5 +83,6 @@ resource "aws_cloudwatch_log_subscription_filter" "papertrail" {
   log_group_name  = each.key
   filter_pattern  = var.filter_pattern
   destination_arn = aws_lambda_function.cloudwatch_to_syslog_server.arn
+  distribution    = "ByLogStream"
 }
 
