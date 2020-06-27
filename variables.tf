@@ -40,3 +40,9 @@ variable "filter_pattern" {
   description = "Log subscription filter pattern"
   default     = ""
 }
+
+variable "lambda_memory_size" {
+  type        = number
+  description = "Memory allocated to Lambda function"
+  default     = 128
+}
