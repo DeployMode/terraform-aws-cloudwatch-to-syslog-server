@@ -8,3 +8,13 @@ output "lambda_arn" {
   description = "The ARN of the lambda function subscribed to the log group."
 }
 
+output "lambda_log_group_name" {
+  value       = aws_cloudwatch_log_group.lambda_log_group.name
+  description = "CloudWatch log group for Lambda name"
+}
+
+output "lambda_log_group_arn" {
+  value       = aws_cloudwatch_log_group.lambda_log_group.arn
+  description = "CloudWatch log group for Lambda ARN"
+}
+
