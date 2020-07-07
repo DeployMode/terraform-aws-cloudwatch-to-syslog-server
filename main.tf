@@ -1,5 +1,5 @@
 locals {
-  log_group_name = join("/", ["/aws/lambda", join("-", [var.name, "logs"])])
+  log_group_name = join("/", ["/aws/lambda", var.name])
 }
 
 resource "null_resource" "install_modules" {
