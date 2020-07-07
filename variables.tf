@@ -13,6 +13,12 @@ variable "account_id" {
   description = "The ID of the AWS account where the AWS CloudWatch Logs are located."
 }
 
+variable "lambda_log_retention" {
+  type        = number
+  default     = 14
+  description = "Log retention in days for the Lambda function's log group"
+}
+
 variable "log_groups" {
   type        = list(string)
   description = "The names of the AWS CloudWatch log group to forward to the syslog server."

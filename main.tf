@@ -1,3 +1,7 @@
+locals {
+  log_group_name = join("/", ["/aws/lambda", join("-", [var.name, "logs"])])
+}
+
 resource "null_resource" "install_modules" {
 
   triggers = {
@@ -39,6 +43,44 @@ resource "aws_lambda_function" "cloudwatch_to_syslog_server" {
       DISABLE_TLS        = var.disable_tls
     }
   }
+
+  depends_on = [
+    aws_iam_role_policy_attachment.lambda_logs,
+    aws_cloudwatch_log_group.lambda_log_group
+  ]
+}
+
+# Log group for Lambda
+resource "aws_cloudwatch_log_group" "lambda_log_group" {
+  name              = local.log_group_name
+  retention_in_days = var.lambda_log_retention
+}
+
+resource "aws_iam_policy" "lambda_logging" {
+  name        = "lambda_logging"
+  path        = "/"
+  description = "IAM policy for logging from a lambda"
+
+  policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Action": [
+        "logs:CreateLogStream",
+        "logs:PutLogEvents"
+      ],
+      "Resource": "arn:aws:logs:${var.region}:${var.account_id}:log-group:${local.log_group_name}:*",
+      "Effect": "Allow"
+    }
+  ]
+}
+EOF
+}
+
+resource "aws_iam_role_policy_attachment" "lambda_logs" {
+  role       = aws_iam_role.cloudwatch_to_syslog_server.name
+  policy_arn = aws_iam_policy.lambda_logging.arn
 }
 
 resource "aws_iam_role" "cloudwatch_to_syslog_server" {
